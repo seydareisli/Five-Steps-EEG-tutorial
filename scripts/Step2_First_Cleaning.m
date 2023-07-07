@@ -4,6 +4,10 @@
 % Last Updated: 06/12/2023
 % -------------------------------------------------------------------------
 
+% Start eeglab
+cd(my_eeglab_path);  addpath(my_eeglab_path);  eeglab;
+
+
 % Define your file paths
 load_path = [my_data_path, '\AfterStep1\'];
 save_path = [my_data_path, '\AfterStep2\'];
@@ -23,22 +27,20 @@ for j = 1:length(subIDs)
     subject_save_path = [save_path, subjectID, filesep]; mkdir(subject_save_path); 
 
     % Load the subject's EEG dataset
+    % If you used inspect_data.m, you may need to load [subjectID, '_inspected.set']
     EEG = pop_loadset('filename', [subjectID, '.set'] , 'filepath', subject_load_path);
     
-    % Downsample the data if needed
-    EEG = pop_resample(EEG, 256); % Resample data
+    % Downsample the data (optional)
+    EEG = pop_resample(EEG, 512);  
 
 
-    % High pass filter to remove slow drifts (below 0.01 Hz)
+    % High pass filter to remove slow drifts (below 0.05 Hz)
     % Low pass filter to remove high frequency noise (above 45 Hz)
-    EEG = pop_eegfiltnew(EEG, 0.01, 45, [], 0, [], 0);
+    EEG = pop_eegfiltnew(EEG, 0.05, 45, [], 0, [], 0);
 
-    
-    % Remove unnecessary channels, ensure these channels match with your dataset
-    EEG = pop_select(EEG,'nochannel',{'RH','LH','RTM','LTM','RBM','LBM','Snas'}); 
-    
-    % Reject channels based on their spectrum, it rejects channels whose spectrum is above 3 standard deviations from the mean
-    EEG = pop_rejchan(EEG, 'elec',[1:EEG.nbchan],'threshold',[-inf 3],'norm','on','measure','spec','freqrange',[1 45]);
+        
+    % Optional second rejection of channels
+    % EEG = pop_rejchan(EEG, 'elec',[1:EEG.nbchan],'threshold',[-inf 3],'norm','on','measure','spec','freqrange',[1 45]);
     
     % Save the cleaned dataset
     pop_saveset(EEG, 'filename', subjectID , 'filepath', subject_save_path);
