@@ -125,5 +125,8 @@ for j = 1:length(subIDs)
 
 end
 
-% Pre-processing is complete now! Ready to plot waveforms and topos.
-
+% Congrats on completing the Five-Step-EEG tutorial!
+% Pre-processing is complete now so you are ready to plot waveforms and topos.
+% Feel free to use merge_all_data.m to merge data across subjects after Step 5.
+% After merging, you can also use introduction_to_plotting.m to learn the basics of plotting
+% Note that I have separate repositories focused on visualization of EEG data.
